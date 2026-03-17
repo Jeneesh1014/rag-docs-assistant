@@ -1,7 +1,6 @@
 # Ask My Docs — Production RAG Application
 
-A production-grade Retrieval Augmented Generation (RAG) system
-for ROS2 and Robotics documentation.
+A production-grade RAG system for AI & Machine Learning research papers.
 
 ## Status
 
