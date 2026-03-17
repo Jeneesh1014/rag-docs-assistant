@@ -1,0 +1,17 @@
+langchain
+langchain-groq
+langchain-community
+langchain-huggingface
+chromadb
+python-dotenv
+pypdf
+rank-bm25
+cohere
+ragas
+datasets
+fastapi
+uvicorn
+gradio
+pydantic
+sentence-transformers
+huggingface-hub
