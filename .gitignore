@@ -1,3 +1,45 @@
+# ─────────────────────────────────────────────
+# RAG-DOCS PROJECT SPECIFIC
+# ─────────────────────────────────────────────
+
+# ChromaDB — vector database (already have ingestion.log, add the folder)
+chroma_db/
+
+# Logs folder — from our new logger setup (logs/rag_docs.log)
+logs/
+
+# HuggingFace model cache (downloaded embedding models)
+.cache/
+huggingface/
+
+# Gradio — creates these when you run the UI
+gradio_cached_examples/
+.gradio/
+flagged/
+
+# FastAPI / Uvicorn
+*.pid
+
+# Cohere / API response cache
+.cohere/
+
+# RAGAS evaluation results
+ragas_results/
+evaluation_results/
+
+# Dataset cache (from HuggingFace datasets library)
+~/.cache/huggingface/datasets/
+
+# Jupyter (if you ever test things in notebooks)
+.ipynb_checkpoints/
+*.ipynb
+
+# Mac specific
+.DS_Store
+**/.DS_Store
+
+
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]

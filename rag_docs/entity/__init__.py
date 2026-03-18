@@ -1,0 +1,2 @@
+from rag_docs.entity.config_entity import IngestionConfig
+from rag_docs.entity.artifact_entity import IngestionArtifact
