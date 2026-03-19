@@ -1,23 +1,29 @@
-
-# Artifact Entities = What results come OUT of each step
-
-from dataclasses import dataclass
-from pathlib import Path
+from dataclasses import dataclass, field
+from typing import List
 
 
 @dataclass
 class IngestionArtifact:
-   
-    chroma_db_path: Path
-
+    total_documents: int
+    total_chunks: int
+    failed_documents: int
     collection_name: str
+    chroma_db_path: str
+    embedding_model: str
 
-    total_pages_loaded: int
 
-    total_chunks_stored: int
+@dataclass
+class RetrievalResult:
+    content: str
+    source: str
+    score: float
+    chunk_index: int
 
-    total_files_processed: int
 
-    verification_passed: bool
-
-    log_file_path: Path
+@dataclass
+class RetrievalArtifact:
+    query: str
+    results: List[RetrievalResult]
+    total_results: int
+    collection_name: str
+    retrieval_time_seconds: float

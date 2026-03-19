@@ -1,30 +1,24 @@
-from dataclasses import dataclass, field
-from typing import List, Dict, Any
+from dataclasses import dataclass
+from pathlib import Path
 
 
 @dataclass
-class IngestionArtifact:
-    total_documents: int
-    total_chunks: int
-    failed_documents: int
-    collection_name: str
-    chroma_db_path: str
+class IngestionConfig:
+    documents_path: Path
+    chroma_db_path: Path
+    chunk_size: int
+    chunk_overlap: int
+    min_chunk_length: int
     embedding_model: str
-
-
-@dataclass
-class RetrievalResult:
-    # one single chunk that came back from search
-    content: str
-    source: str
-    score: float
-    chunk_index: int
-
-
-@dataclass
-class RetrievalArtifact:
-    query: str
-    results: List[RetrievalResult]
-    total_results: int
+    embedding_device: str
     collection_name: str
-    retrieval_time_seconds: float
+    batch_size: int
+
+
+@dataclass
+class RetrievalConfig:
+    chroma_db_path: Path
+    collection_name: str
+    embedding_model: str
+    embedding_device: str
+    top_k: int = 8
