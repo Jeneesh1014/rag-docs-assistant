@@ -18,4 +18,5 @@ gradio
 pydantic
 sentence-transformers
 huggingface-hub
+pytest
 
