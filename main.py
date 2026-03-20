@@ -50,24 +50,29 @@ def run_retrieval():
         embedding_model=EMBEDDING_MODEL,
         embedding_device=EMBEDDING_DEVICE,
         top_k=8,
+        vector_weight=0.6,
+        bm25_weight=0.4,
     )
 
     retriever = Retriever(config)
     retriever.load_vector_store()
+    retriever.load_bm25_index()   # ← new — must call this before hybrid or bm25
 
-    # test with a few different queries to see quality of results
     test_queries = [
         "How does the attention mechanism work in transformers?",
         "What is LoRA and how does it reduce training parameters?",
         "How does BERT use masked language modeling?",
     ]
 
-    for query in test_queries:
-        artifact = retriever.retrieve(query)
+    # run same query through all three methods so you can compare quality
+    query = test_queries[0]
+
+    for method in ["vector", "bm25", "hybrid"]:
+        artifact = retriever.retrieve(query, method=method)
         retriever.log_results(artifact)
 
 
 if __name__ == "__main__":
-    # comment out run_ingestion() if db already exists
+    # comment out run_ingestion() once db exists
     # run_ingestion()
     run_retrieval()
