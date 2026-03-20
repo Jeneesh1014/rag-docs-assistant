@@ -30,3 +30,8 @@ BATCH_SIZE      = 500    # How many chunks to process at once
 
 # ── Display Settings
 SEPARATOR_LINE  = "─" * 50
+
+# ── Retrieval Settings
+TOP_K          = 8
+VECTOR_WEIGHT  = 0.6
+BM25_WEIGHT    = 0.4

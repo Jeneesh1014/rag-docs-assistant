@@ -9,6 +9,9 @@ from rag_docs.config.settings import (
     COLLECTION_NAME,
     BATCH_SIZE,
     SEPARATOR_LINE,
+    TOP_K,
+    VECTOR_WEIGHT,
+    BM25_WEIGHT
 )
 from rag_docs.entity import IngestionConfig, RetrievalConfig
 from rag_docs.core.ingestion import DocumentIngestion
@@ -49,9 +52,9 @@ def run_retrieval():
         collection_name=COLLECTION_NAME,
         embedding_model=EMBEDDING_MODEL,
         embedding_device=EMBEDDING_DEVICE,
-        top_k=8,
-        vector_weight=0.6,
-        bm25_weight=0.4,
+        top_k=TOP_K,
+        vector_weight=VECTOR_WEIGHT,
+        bm25_weight=BM25_WEIGHT,
     )
 
     retriever = Retriever(config)
