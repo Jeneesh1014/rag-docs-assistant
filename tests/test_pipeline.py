@@ -73,7 +73,7 @@ def test_vector_store_loads(retriever):
 
 def test_bm25_index_loads(retriever):
     """bm25 index needs corpus texts and metadata to work"""
-    assert retriever.bm25 is not None
+    assert retriever.bm25_index is not None
     assert len(retriever.bm25_corpus_texts) > 0
     assert len(retriever.bm25_corpus_metadata) > 0
 
