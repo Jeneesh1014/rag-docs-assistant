@@ -22,3 +22,5 @@ class RetrievalConfig:
     embedding_model: str
     embedding_device: str
     top_k: int = 8
+    vector_weight:float = 0.6
+    bm25_weight:float = 0.4

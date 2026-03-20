@@ -27,3 +27,4 @@ class RetrievalArtifact:
     total_results: int
     collection_name: str
     retrieval_time_seconds: float
+    search_method:str = "hybrid"
