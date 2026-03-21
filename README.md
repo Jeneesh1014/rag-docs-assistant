@@ -1,28 +1,21 @@
 # Ask My Docs — Production RAG Application
 
-A production-grade RAG system for AI & Machine Learning research papers.
+A production-grade RAG system for querying AI & Machine Learning research papers.
+Ask questions in plain English — get cited answers backed by real papers.
 
 ## Status
 
-🚧 Week 1 - In Progress
+✅ Week 1 Complete — Ingestion + Hybrid Retrieval + 26 Tests Passing
 
 ## Tech Stack
 
-- LangChain + ChromaDB (vector store)
-- BM25 + Vector Hybrid Search
-- Cohere Reranking
-- OpenAI gpt-4o-mini (answer generation)
-- Ragas (evaluation)
-- GitHub Actions (CI pipeline)
+- **LangChain + ChromaDB** — vector store (local, no API needed)
+- **sentence-transformers/all-MiniLM-L6-v2** — embeddings (local CPU)
+- **BM25 + Vector Hybrid Search** — keyword + semantic, weighted 0.6/0.4
+- **Cohere rerank-english-v3.0** — reranking top results
+- **Groq llama-3.3-70b-versatile** — answer generation
+- **Ragas** — retrieval + generation evaluation
+- **GitHub Actions** — CI quality gates
+- **Gradio + FastAPI** — UI and API endpoint
 
-## Architecture
-
-Document Ingestion → Hybrid Search → Reranking → Answer + Citations
-
-## Setup
-
-```bash
-python -m venv venv
-source venv/bin/activate  # or venv\Scripts\activate on Windows
-pip install -r requirements.txt
-```
+## Pipeline
