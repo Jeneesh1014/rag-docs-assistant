@@ -53,6 +53,8 @@ def run_retrieval(query: str):
         embedding_device=EMBEDDING_DEVICE,
     )
     retriever = Retriever(config)
+    retriever.load_vector_store() 
+    retriever.load_bm25_index()       
     artifact = retriever.retrieve(query)
     retriever.log_results(artifact)
     return artifact
