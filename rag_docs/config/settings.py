@@ -35,3 +35,6 @@ SEPARATOR_LINE  = "─" * 50
 TOP_K          = 8
 VECTOR_WEIGHT  = 0.6
 BM25_WEIGHT    = 0.4
+
+COHERE_MODEL = "rerank-english-v3.0"
+RERANK_TOP_N = 3

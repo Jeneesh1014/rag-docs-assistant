@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from pathlib import Path
 
-from rag_docs.config.settings import TOP_K, VECTOR_WEIGHT, BM25_WEIGHT
+from rag_docs.config.settings import TOP_K, VECTOR_WEIGHT, BM25_WEIGHT,COHERE_MODEL, RERANK_TOP_N
 
 
 @dataclass
@@ -26,3 +26,10 @@ class RetrievalConfig:
     top_k: int = TOP_K
     vector_weight:float = VECTOR_WEIGHT
     bm25_weight:float = BM25_WEIGHT
+
+
+@dataclass
+class RerankingConfig:
+    cohere_api_key:str
+    model:str = COHERE_MODEL
+    top_n:int = RERANK_TOP_N

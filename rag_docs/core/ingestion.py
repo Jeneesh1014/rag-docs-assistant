@@ -24,9 +24,8 @@ class DocumentIngestion:
         self.logger.info(f"Starting ingestion — docs: {config.documents_path}")
 
 
-    # ------------------------------------------------------------------
+    
     # STEP 0 — make sure we don't accidentally double-ingest
-    # ------------------------------------------------------------------
 
     def check_existing_db(self) -> bool:
         # Returns True if we should SKIP ingestion (DB already good)
@@ -56,9 +55,7 @@ class DocumentIngestion:
             raise
 
 
-    # ------------------------------------------------------------------
     # STEP 1 — read all the PDF files
-    # ------------------------------------------------------------------
 
     def load_documents(self) -> list:
         try:
@@ -106,9 +103,7 @@ class DocumentIngestion:
             raise
 
 
-    # ------------------------------------------------------------------
     # STEP 2 — split pages into chunks the embedding model can handle
-    # ------------------------------------------------------------------
 
     def split_documents(self, documents: list) -> list:
         try:
@@ -165,9 +160,7 @@ class DocumentIngestion:
             raise
 
 
-    # ------------------------------------------------------------------
     # STEP 3 — convert chunks to vectors and store in ChromaDB
-    # ------------------------------------------------------------------
 
     def create_vector_store(self, chunks: list) -> Chroma:
         try:
@@ -215,9 +208,8 @@ class DocumentIngestion:
             raise
 
 
-    # ------------------------------------------------------------------
+    
     # STEP 4 — quick sanity check to make sure search actually works
-    # ------------------------------------------------------------------
 
     def verify_vector_store(self, vector_store: Chroma) -> bool:
         try:
@@ -266,9 +258,7 @@ class DocumentIngestion:
             raise
 
 
-    # ------------------------------------------------------------------
     # main entry point — called from main.py, runs everything in order
-    # ------------------------------------------------------------------
 
     def initiate_ingestion(self) -> IngestionArtifact:
         try:

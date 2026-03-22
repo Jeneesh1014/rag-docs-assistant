@@ -1,5 +1,5 @@
-from rag_docs.entity.config_entity import IngestionConfig, RetrievalConfig
-from rag_docs.entity.artifact_entity import IngestionArtifact, RetrievalArtifact, RetrievalResult
+from rag_docs.entity.config_entity import IngestionConfig, RetrievalConfig, RerankingConfig
+from rag_docs.entity.artifact_entity import IngestionArtifact, RetrievalArtifact, RetrievalResult, RerankingArtifact, RerankingResult
 
 __all__ = [
     "IngestionConfig",
@@ -7,4 +7,7 @@ __all__ = [
     "IngestionArtifact",
     "RetrievalArtifact",
     "RetrievalResult",
+    "RerankingConfig",
+    "RerankingArtifact",
+    "RerankingResult"
 ]

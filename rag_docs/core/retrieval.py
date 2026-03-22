@@ -23,9 +23,7 @@ class Retriever:
         self.bm25_corpus_metadata = [] # matching metadata for each chunk
 
 
-    # ------------------------------------------------------------------
     # SETUP — load vector store + build BM25 index
-    # ------------------------------------------------------------------
 
     def load_vector_store(self) -> None:
         # loading an existing db — Chroma(), not Chroma.from_documents()
@@ -76,9 +74,7 @@ class Retriever:
         self.logger.info(f"BM25 index built — {len(self.bm25_corpus_texts)} chunks indexed")
 
 
-    # ------------------------------------------------------------------
     # SEARCH — three modes: vector, bm25, hybrid
-    # ------------------------------------------------------------------
 
     def vector_search(self, query: str) -> list:
         # returns list of (text, metadata, score) tuples
@@ -176,9 +172,7 @@ class Retriever:
         return combined[:self.config.top_k]
 
 
-    # ------------------------------------------------------------------
     # FORMAT + LOG results
-    # ------------------------------------------------------------------
 
     def format_results(
         self,

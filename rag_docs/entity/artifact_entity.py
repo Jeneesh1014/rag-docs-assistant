@@ -28,3 +28,20 @@ class RetrievalArtifact:
     collection_name: str
     retrieval_time_seconds: float
     search_method:str = "hybrid"
+
+
+@dataclass
+class RerankingResult:
+    content: str
+    source: str
+    relevance_score: float   
+    original_rank: int       
+    reranked_rank: int       
+
+@dataclass
+class RerankingArtifact:
+    query: str
+    results: List[RerankingResult]
+    total_results: int
+    model: str
+    reranking_time_seconds: float
