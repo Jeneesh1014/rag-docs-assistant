@@ -1,7 +1,5 @@
-
 # ALL configuration in ONE place
 # Change settings here — everything else updates automatically
-
 
 from pathlib import Path
 from dotenv import load_dotenv
@@ -16,25 +14,31 @@ CHROMA_DB_PATH = BASE_DIR / "chroma_db"
 LOGS_PATH      = BASE_DIR / "logs"
 
 # ── Chunking Settings
-CHUNK_SIZE       = 500   # Max characters per chunk
-CHUNK_OVERLAP    = 50    # Characters shared between chunks
-MIN_CHUNK_LENGTH = 50    # Ignore chunks shorter than this
+CHUNK_SIZE       = 500
+CHUNK_OVERLAP    = 50
+MIN_CHUNK_LENGTH = 50
 
 # ── Embedding Model
-EMBEDDING_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
-EMBEDDING_DEVICE = "cpu"   # Change to "cuda" if you have GPU
+EMBEDDING_MODEL  = "sentence-transformers/all-MiniLM-L6-v2"
+EMBEDDING_DEVICE = "cpu"
 
-# ── ChromaDB Settings 
+# ── ChromaDB Settings
 COLLECTION_NAME = "research_papers"
-BATCH_SIZE      = 500    # How many chunks to process at once
+BATCH_SIZE      = 500
 
 # ── Display Settings
-SEPARATOR_LINE  = "─" * 50
+SEPARATOR_LINE = "─" * 50
 
 # ── Retrieval Settings
-TOP_K          = 8
-VECTOR_WEIGHT  = 0.6
-BM25_WEIGHT    = 0.4
+TOP_K         = 8
+VECTOR_WEIGHT = 0.6
+BM25_WEIGHT   = 0.4
 
+# ── Reranking Settings
 COHERE_MODEL = "rerank-english-v3.0"
 RERANK_TOP_N = 3
+
+# ── Generation Settings
+GROQ_MODEL  = "llama-3.1-8b-instant"
+MAX_TOKENS  = 1024
+TEMPERATURE = 0.1
