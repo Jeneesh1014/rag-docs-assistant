@@ -40,10 +40,6 @@ load_dotenv()
 logger = get_logger(__name__)
 
 
-# ─────────────────────────────────────────────
-# INGESTION
-# ─────────────────────────────────────────────
-
 def run_ingestion():
     logger.info("Starting ingestion")
 
@@ -73,13 +69,13 @@ def run_ingestion():
     return artifact
 
 
-# ─────────────────────────────────────────────
-# RETRIEVAL
-# ─────────────────────────────────────────────
-
-def run_retrieval(query: str):
-    logger.info(f"Starting retrieval for: {query}")
-
+def build_retriever():
+    """
+    Creates and loads the retriever once.
+    Call this once at startup and reuse it across multiple queries
+    instead of rebuilding the BM25 index and reloading the embedding
+    model on every single question.
+    """
     config = RetrievalConfig(
         chroma_db_path=CHROMA_DB_PATH,
         collection_name=COLLECTION_NAME,
@@ -93,20 +89,10 @@ def run_retrieval(query: str):
     retriever = Retriever(config)
     retriever.load_vector_store()
     retriever.load_bm25_index()
-
-    artifact = retriever.retrieve(query)
-    retriever.log_results(artifact)
-
-    return artifact
+    return retriever
 
 
-# ─────────────────────────────────────────────
-# RERANKING
-# ─────────────────────────────────────────────
-
-def run_reranking(query: str):
-    retrieval_artifact = run_retrieval(query)
-
+def build_reranker():
     cohere_api_key = os.getenv("COHERE_API_KEY")
     if not cohere_api_key:
         logger.error("COHERE_API_KEY not found in environment")
@@ -117,25 +103,10 @@ def run_reranking(query: str):
         model=COHERE_MODEL,
         top_n=RERANK_TOP_N,
     )
-
-    reranker = Reranker(config)
-    artifact = reranker.rerank(retrieval_artifact)
-    reranker.log_results(artifact)
-
-    return artifact
+    return Reranker(config)
 
 
-# ─────────────────────────────────────────────
-# GENERATION
-# ─────────────────────────────────────────────
-
-def run_generation(query: str):
-    """
-    Full pipeline: retrieve → rerank → generate.
-    Returns a RAGAnswer with citations.
-    """
-    reranking_artifact = run_reranking(query)
-
+def build_generator():
     groq_api_key = os.getenv("GROQ_API_KEY")
     if not groq_api_key:
         logger.error("GROQ_API_KEY not found in environment")
@@ -150,21 +121,39 @@ def run_generation(query: str):
 
     generator = Generator(config)
     generator.load_client()
+    return generator
+
+
+def run_generation(query: str, retriever=None, reranker=None, generator=None):
+    """
+    Full pipeline for one query.
+
+    You can pass in pre-built retriever/reranker/generator so they are
+    not rebuilt on every call. If you do not pass them, it builds fresh
+    ones — useful for single one-off queries.
+    """
+    if retriever is None:
+        retriever = build_retriever()
+    if reranker is None:
+        reranker = build_reranker()
+    if generator is None:
+        generator = build_generator()
+
+    logger.info(f"Starting retrieval for: {query}")
+    retrieval_artifact  = retriever.retrieve(query)
+    retriever.log_results(retrieval_artifact)
+
+    reranking_artifact  = reranker.rerank(retrieval_artifact)
+    reranker.log_results(reranking_artifact)
 
     answer = generator.initiate_generation(reranking_artifact)
     generator.log_results(answer)
 
-    # Pretty print to terminal so Day 6 manual testing is easy to read
     _print_answer(answer)
-
     return answer
 
 
 def _print_answer(answer):
-    """
-    Human-readable terminal output for manual testing.
-    Not a logger call — this is intentional UI output for the developer.
-    """
     print()
     print(SEPARATOR_LINE)
     print(f"Question : {answer.question}")
@@ -184,19 +173,13 @@ def _print_answer(answer):
     print()
 
 
-# ─────────────────────────────────────────────
-# ENTRY POINT
-# ─────────────────────────────────────────────
-
 if __name__ == "__main__":
-    # ── Change this flag to control what runs ──
-    RUN_INGESTION = False   # Set True only when you need to re-ingest
-    RUN_PIPELINE  = True    # Full retrieve → rerank → generate
+    RUN_INGESTION = False
+    RUN_PIPELINE  = True
 
     if RUN_INGESTION:
         run_ingestion()
 
     if RUN_PIPELINE:
-        # Day 6 question bank — uncomment one at a time or loop all
         query = "How does the attention mechanism work in transformers?"
         run_generation(query)
