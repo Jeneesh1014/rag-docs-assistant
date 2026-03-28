@@ -17,14 +17,12 @@ class Generator:
         self.config = config
         self.client = None
 
-    # ── Step 1 ─────────────────────────────────────────────────
 
     def load_client(self):
         """Connect to Groq API."""
         self.client = Groq(api_key=self.config.groq_api_key)
         logger.info(f"Groq client loaded — model: {self.config.model}")
 
-    # ── Step 2 ─────────────────────────────────────────────────
 
     def build_prompt(self, artifact: RerankingArtifact) -> tuple[str, str]:
         """
@@ -65,7 +63,6 @@ class Generator:
 
         return system_prompt, user_prompt
 
-    # ── Step 3 ─────────────────────────────────────────────────
 
     def call_groq(self, system_prompt: str, user_prompt: str) -> str:
         """
@@ -85,7 +82,6 @@ class Generator:
         # response.choices[0].message.content is where Groq puts the answer
         return response.choices[0].message.content
 
-    # ── Step 4 ─────────────────────────────────────────────────
 
     def build_answer(
         self,
@@ -119,7 +115,6 @@ class Generator:
             total_chunks_used=len(artifact.results),
         )
 
-    # ── Step 5 ─────────────────────────────────────────────────
 
     def log_results(self, answer: RAGAnswer):
         """Log the answer and citations in a readable format."""
@@ -139,7 +134,6 @@ class Generator:
         )
         logger.info("─" * 50)
 
-    # ── Main Entry Point ───────────────────────────────────────
 
     def initiate_generation(self, artifact: RerankingArtifact) -> RAGAnswer:
         """

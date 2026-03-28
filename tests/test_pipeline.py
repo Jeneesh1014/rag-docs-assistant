@@ -19,9 +19,7 @@ from rag_docs.entity import RetrievalConfig, RetrievalArtifact, RetrievalResult
 from rag_docs.core.retrieval import Retriever
 
 
-# ─────────────────────────────────────────────────────────────
 # shared retriever — built once, reused across all tests
-# ─────────────────────────────────────────────────────────────
 
 @pytest.fixture(scope="module")
 def retriever():
@@ -45,9 +43,9 @@ def sample_query():
     return "How does the transformer attention mechanism work?"
 
 
-# ─────────────────────────────────────────────────────────────
+
 # 1. infrastructure checks
-# ─────────────────────────────────────────────────────────────
+
 
 def test_chroma_db_exists():
     """ingestion must have run before we can test anything"""
@@ -62,9 +60,9 @@ def test_chroma_db_not_empty():
     assert len(files) > 0, "ChromaDB folder exists but is empty"
 
 
-# ─────────────────────────────────────────────────────────────
+
 # 2. retriever loads correctly
-# ─────────────────────────────────────────────────────────────
+
 
 def test_vector_store_loads(retriever):
     """chroma collection should be accessible"""
@@ -89,9 +87,9 @@ def test_corpus_metadata_matches_texts(retriever):
     assert len(retriever.bm25_corpus_texts) == len(retriever.bm25_corpus_metadata)
 
 
-# ─────────────────────────────────────────────────────────────
+
 # 3. each search method returns results
-# ─────────────────────────────────────────────────────────────
+
 
 def test_vector_search_returns_results(retriever, sample_query):
     artifact = retriever.retrieve(sample_query, method="vector")
@@ -108,9 +106,9 @@ def test_hybrid_search_returns_results(retriever, sample_query):
     assert artifact.total_results > 0, "Hybrid search returned nothing"
 
 
-# ─────────────────────────────────────────────────────────────
+
 # 4. RetrievalArtifact structure
-# ─────────────────────────────────────────────────────────────
+
 
 def test_artifact_fields_populated(retriever, sample_query):
     artifact = retriever.retrieve(sample_query, method="hybrid")
@@ -153,9 +151,9 @@ def test_every_result_has_score(retriever, sample_query):
         )
 
 
-# ─────────────────────────────────────────────────────────────
+
 # 5. score sanity checks
-# ─────────────────────────────────────────────────────────────
+
 
 def test_hybrid_scores_in_valid_range(retriever, sample_query):
     """hybrid normalizes both scores to [0,1] then combines them
@@ -180,9 +178,9 @@ def test_top_result_scores_higher_than_last(retriever, sample_query):
     )
 
 
-# ─────────────────────────────────────────────────────────────
+
 # 6. top_k is respected
-# ─────────────────────────────────────────────────────────────
+
 
 def test_vector_search_respects_top_k(retriever, sample_query):
     artifact = retriever.retrieve(sample_query, method="vector")
@@ -199,9 +197,9 @@ def test_hybrid_search_respects_top_k(retriever, sample_query):
     assert artifact.total_results <= retriever.config.top_k
 
 
-# ─────────────────────────────────────────────────────────────
+
 # 7. query relevance — does the right paper come back?
-# ─────────────────────────────────────────────────────────────
+
 
 def test_transformer_query_returns_transformer_paper(retriever):
     """'attention mechanism' should pull transformer.pdf into top results"""
@@ -236,9 +234,7 @@ def test_rag_query_returns_rag_paper(retriever):
     )
 
 
-# ─────────────────────────────────────────────────────────────
 # 8. retrieval speed — should not be painfully slow
-# ─────────────────────────────────────────────────────────────
 
 def test_hybrid_retrieval_completes_in_reasonable_time(retriever, sample_query):
     """hybrid search on local CPU should finish in under 10 seconds"""
@@ -248,9 +244,7 @@ def test_hybrid_retrieval_completes_in_reasonable_time(retriever, sample_query):
     assert elapsed < 10.0, f"Hybrid search took {elapsed:.2f}s — too slow"
 
 
-# ─────────────────────────────────────────────────────────────
 # 9. edge cases
-# ─────────────────────────────────────────────────────────────
 
 def test_short_query_does_not_crash(retriever):
     """single word query should not throw an exception"""
