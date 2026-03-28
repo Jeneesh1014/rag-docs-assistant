@@ -1,89 +1,51 @@
-```markdown
-# Ask My Docs — Production RAG Application
+## Overview
 
-A production-grade RAG system that lets you query documents in plain English
-and get cited, grounded answers backed by the actual source content.
+Ask My Docs is a production-ready Retrieval-Augmented Generation (RAG) system designed to provide accurate answers from document collections.
 
-## Status
+The system retrieves relevant content and ensures that every response is supported by actual source data, reducing hallucinations and improving reliability.
 
-Week 1 — Ingestion + Hybrid Retrieval — 26 tests passing
-Week 2 — Reranking + Generation + Full Pipeline — 51 tests passing, 10/10 end-to-end verified
+---
+
+## Current Progress
+
+- Week 1: Ingestion and Hybrid Retrieval — 26 tests passing  
+- Week 2: Reranking and Full Pipeline — 51 tests passing  
+- End-to-end validation: 10/10 queries verified with correct citations  
+
+---
+
+## Key Features
+
+- Hybrid search combining semantic and keyword-based retrieval  
+- Inline citations grounded in retrieved documents  
+- Fast response time with sub-second generation  
+- Structured outputs using typed schemas  
+- Fully tested pipeline with evaluation support  
+
+---
 
 ## Tech Stack
 
-- **LangChain + ChromaDB** — vector store, runs locally
-- **sentence-transformers/all-MiniLM-L6-v2** — embeddings on CPU, no API needed
-- **BM25 + Vector Hybrid Search** — keyword + semantic search, weighted 0.4/0.6
-- **Cohere rerank-english-v3.0** — reranks top 8 candidates down to top 3
-- **Groq llama-3.3-70b-versatile** — answer generation
-- **Pydantic** — structured output with typed citation objects
-- **Ragas + GitHub Actions** — evaluation metrics and CI quality gates
-- **Gradio + FastAPI** — UI and REST API endpoint
+- LangChain and ChromaDB for vector storage and retrieval  
+- sentence-transformers (all-MiniLM-L6-v2) for embeddings  
+- BM25 and vector search for hybrid retrieval  
+- Cohere rerank model for improved relevance  
+- Groq LLaMA models for answer generation  
+- Pydantic for structured outputs  
 
-## Pipeline
+---
 
-```
-Documents
-    ↓
-Ingestion — chunk → embed → store in ChromaDB
-    ↓
-Hybrid Retrieval — BM25 + vector search → top 8 results
-    ↓
-Reranking — Cohere → top 3 most relevant chunks
-    ↓
-Generation — Groq LLM → structured answer with inline citations
-    ↓
-Evaluation — Ragas faithfulness, relevancy, precision, recall
-```
+## Notes on Implementation
 
-## How It Works
+The system uses a hybrid retrieval approach to balance keyword matching and semantic understanding. Retrieved results are reranked before being passed to the language model.
 
-You ask a question. The system retrieves the most relevant chunks using
-hybrid search, reranks them with Cohere, then passes the top 3 to the LLM
-with numbered references. The answer comes back with inline citations
-[1][2][3] grounded in the actual retrieved content — not hallucinated.
+Citations are generated directly from the retrieval pipeline rather than relying on the model output, ensuring consistency and correctness.
 
-Citations are built directly from the reranker output, not parsed from LLM
-text. This keeps them reliable.
+---
 
-**Example response time:** retrieval 0.09s — rerank 0.37s — generation 0.69s
+## Performance
 
-## Setup
-
-```bash
-git clone https://github.com/your-username/rag-docs-assistant
-cd rag-docs-assistant
-python -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
-```
-
-Add a `.env` file:
-
-```
-GROQ_API_KEY=your_key_here
-COHERE_API_KEY=your_key_here
-GROQ_MODEL=llama-3.1-8b-instant
-```
-
-Run ingestion once, then start querying:
-
-```bash
-python main.py
-```
-
-## Tests
-
-```bash
-pytest tests/
-```
-
-51 automated tests passing across ingestion, retrieval, reranking, and generation.
-End-to-end pipeline verified with 10 real queries — all cited, all grounded, all
-returning in under 1 second generation time.
-
-## What's Next
-
-- Ragas evaluation dataset + CI quality gates via GitHub Actions
-- Gradio UI + FastAPI endpoint
+- Retrieval: ~0.09 seconds  
+- Reranking: ~0.37 seconds  
+- Generation: ~0.69 seconds  
 
