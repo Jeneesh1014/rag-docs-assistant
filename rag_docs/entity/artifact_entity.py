@@ -45,3 +45,25 @@ class RerankingArtifact:
     total_results: int
     model: str
     reranking_time_seconds: float
+
+
+@dataclass
+class EvaluationSample:
+    question: str
+    answer: str
+    contexts: List[str]
+    ground_truth: str
+
+
+@dataclass
+class EvaluationArtifact:
+    total_questions: int
+    faithfulness: float
+    answer_relevancy: float
+    context_precision: float
+    context_recall: float
+    results_path: str
+    samples: List[EvaluationSample] = field(default_factory=list)
+
+    def passes_quality_gate(self, min_faithfulness: float = 0.7) -> bool:
+        return self.faithfulness >= min_faithfulness

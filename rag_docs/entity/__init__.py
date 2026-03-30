@@ -3,6 +3,7 @@ from rag_docs.entity.config_entity import (
     RetrievalConfig,
     RerankingConfig,
     GenerationConfig,
+    EvaluationConfig,
 )
 from rag_docs.entity.artifact_entity import (
     IngestionArtifact,
@@ -10,6 +11,8 @@ from rag_docs.entity.artifact_entity import (
     RetrievalResult,
     RerankingArtifact,
     RerankingResult,
+    EvaluationSample,
+    EvaluationArtifact,
 )
 from rag_docs.entity.generation_models import (
     Citation,
@@ -21,11 +24,14 @@ __all__ = [
     "RetrievalConfig",
     "RerankingConfig",
     "GenerationConfig",
+    "EvaluationConfig",
     "IngestionArtifact",
     "RetrievalArtifact",
     "RetrievalResult",
     "RerankingArtifact",
     "RerankingResult",
+    "EvaluationSample",
+    "EvaluationArtifact",
     "Citation",
     "RAGAnswer",
 ]

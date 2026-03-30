@@ -44,3 +44,14 @@ class GenerationConfig:
     model: str = GROQ_MODEL
     temperature: float = TEMPERATURE
     max_tokens: int = MAX_TOKENS
+
+
+
+@dataclass
+class EvaluationConfig:
+    questions_path: Path = Path("data/eval_questions.json")
+    results_path: Path = Path("evaluation_results.json")
+    groq_api_key: str = ""
+    groq_model: str = GROQ_MODEL
+    cohere_api_key: str = ""    
+    sleep_between_questions: int = 10
