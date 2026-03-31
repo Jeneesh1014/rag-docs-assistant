@@ -22,7 +22,7 @@ def main():
     print("\n" + "─" * 50)
     print(f"Questions evaluated : {artifact.total_questions}")
     print(f"Faithfulness        : {artifact.faithfulness:.3f}")
-    print(f"Answer relevancy    : {artifact.answer_relevancy:.3f}")
+    print(f"Answer relevancy    : skipped (Groq n=1 limitation)")
     print(f"Context precision   : {artifact.context_precision:.3f}")
     print(f"Context recall      : {artifact.context_recall:.3f}")
     print(f"Quality gate        : {'PASS' if artifact.passes_quality_gate() else 'FAIL'}")

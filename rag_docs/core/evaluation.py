@@ -5,7 +5,7 @@ from typing import List
 
 from datasets import Dataset
 from ragas import evaluate
-from ragas.metrics import faithfulness, answer_relevancy, context_precision, context_recall
+from ragas.metrics import faithfulness, context_precision, context_recall
 from ragas.llms import LangchainLLMWrapper
 from ragas.embeddings import LangchainEmbeddingsWrapper
 from langchain_groq import ChatGroq
@@ -157,7 +157,7 @@ class Evaluator:
 
         result = evaluate(
             dataset=dataset,
-            metrics=[faithfulness, answer_relevancy, context_precision, context_recall],
+            metrics=[faithfulness, context_precision, context_recall],
             llm=ragas_llm,
             embeddings=ragas_embeddings,
             run_config=run_config,
@@ -172,14 +172,12 @@ class Evaluator:
 
         scores = {
             "faithfulness":      safe_mean(result["faithfulness"]),
-            "answer_relevancy":  safe_mean(result["answer_relevancy"]),
             "context_precision": safe_mean(result["context_precision"]),
             "context_recall":    safe_mean(result["context_recall"]),
         }
 
         logger.info(
             f"faithfulness={scores['faithfulness']:.3f} | "
-            f"answer_relevancy={scores['answer_relevancy']:.3f} | "
             f"context_precision={scores['context_precision']:.3f} | "
             f"context_recall={scores['context_recall']:.3f}"
         )
@@ -232,7 +230,7 @@ class Evaluator:
         artifact = EvaluationArtifact(
             total_questions=len(samples),
             faithfulness=scores["faithfulness"],
-            answer_relevancy=scores["answer_relevancy"],
+            answer_relevancy=None,
             context_precision=scores["context_precision"],
             context_recall=scores["context_recall"],
             results_path=results_path,
