@@ -25,8 +25,7 @@ flagged/
 
 # RAGAS evaluation results
 ragas_results/
-evaluation_results/
-evaluation_results.json
+
 
 # Dataset cache (from HuggingFace datasets library)
 ~/.cache/huggingface/datasets/
@@ -52,8 +51,7 @@ __pycache__/
 ingestion.log
 chroma_db/
 
-.evaluation_results/
-.evaluation_results.json/
+
 # Distribution / packaging
 .Python
 build/
