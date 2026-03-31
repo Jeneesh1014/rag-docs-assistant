@@ -1,4 +1,5 @@
 import os
+import sys
 from dotenv import load_dotenv
 
 from rag_docs.entity import EvaluationConfig
@@ -28,6 +29,10 @@ def main():
     print(f"Quality gate        : {'PASS' if artifact.passes_quality_gate() else 'FAIL'}")
     print(f"Results saved to    : {artifact.results_path}")
     print("─" * 50 + "\n")
+
+    # exit 1 so GitHub Actions fails the build when quality drops
+    if not artifact.passes_quality_gate():
+        sys.exit(1)
 
 
 if __name__ == "__main__":
