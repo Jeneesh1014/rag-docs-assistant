@@ -1,0 +1,44 @@
+name: RAG Quality Gate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  quality-gate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install python-dotenv
+
+      - name: Check evaluation results
+        run: python check_results.py
+
+      - name: Print scores summary
+        if: always()
+        run: |
+          echo "=== RAG Evaluation Scores ==="
+          python -c "
+          import json
+          with open('evaluation_results.json') as f:
+              r = json.load(f)
+          s = r['scores']
+          print(f'Faithfulness      : {s[\"faithfulness\"]:.3f}')
+          print(f'Context precision : {s[\"context_precision\"]:.3f}')
+          print(f'Context recall    : {s[\"context_recall\"]:.3f}')
+          print(f'Quality gate      : {\"PASS\" if r[\"quality_gate\"][\"passes\"] else \"FAIL\"}')
+          print(f'Timestamp         : {r[\"timestamp\"]}')
+          "
