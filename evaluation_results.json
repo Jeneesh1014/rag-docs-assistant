@@ -2,13 +2,13 @@
   "timestamp": "2026-03-31 19:10:10",
   "total_questions": 20,
   "scores": {
-    "faithfulness": 0.7338690476190475,
-    "context_precision": 0.8083333332945835,
+    "faithfulness": 0.5,
+    "context_precision": 0.808,
     "context_recall": 0.35
   },
   "quality_gate": {
     "min_faithfulness": 0.7,
-    "passes": true
+    "passes": false
   },
   "samples": [
     {
