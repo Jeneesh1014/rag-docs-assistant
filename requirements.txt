@@ -19,4 +19,4 @@ pydantic
 sentence-transformers
 huggingface-hub
 pytest
-
+requests
