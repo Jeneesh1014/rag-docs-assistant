@@ -175,6 +175,8 @@ def test_initiate_generation_mocked(generator, fake_artifact):
 # 5. real Groq API call — one live test
 # ─────────────────────────────────────────────────────────────
 
+
+@pytest.mark.live_groq
 def test_real_groq_call(generator, fake_artifact):
     """One real API call — confirms live integration works."""
     answer = generator.initiate_generation(fake_artifact)

@@ -1,10 +1,5 @@
-import sys
 import time
 import pytest
-from pathlib import Path
-
-# make sure project root is on the path
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from rag_docs.config.settings import (
     BM25_WEIGHT,
@@ -15,27 +10,7 @@ from rag_docs.config.settings import (
     TOP_K,
     VECTOR_WEIGHT,
 )
-from rag_docs.entity import RetrievalConfig, RetrievalArtifact, RetrievalResult
-from rag_docs.core.retrieval import Retriever
-
-
-# shared retriever — built once, reused across all tests
-
-@pytest.fixture(scope="module")
-def retriever():
-    config = RetrievalConfig(
-        chroma_db_path=CHROMA_DB_PATH,
-        collection_name=COLLECTION_NAME,
-        embedding_model=EMBEDDING_MODEL,
-        embedding_device=EMBEDDING_DEVICE,
-        top_k=TOP_K,
-        vector_weight=VECTOR_WEIGHT,
-        bm25_weight=BM25_WEIGHT
-    )
-    r = Retriever(config)
-    r.load_vector_store()
-    r.load_bm25_index()
-    return r
+from rag_docs.entity import RetrievalArtifact, RetrievalResult
 
 
 @pytest.fixture(scope="module")

@@ -1,20 +1,22 @@
 import os
-import requests
+
 import gradio as gr
+import requests
 from dotenv import load_dotenv
+
 from rag_docs.logging.logger import get_logger
 
 load_dotenv()
 
 logger = get_logger(__name__)
 
-API_URL = os.getenv("API_URL", "http://localhost:8000")
+API_URL = os.getenv("API_URL", "http://127.0.0.1:8000")
 MAX_QUESTION_LENGTH = 500
 
 
-def format_citations(citations):
+def _format_citations(citations):
     if not citations:
-        return "No citations available."
+        return "No citations returned."
 
     lines = []
     for i, citation in enumerate(citations, start=1):
@@ -26,66 +28,80 @@ def format_citations(citations):
 
 
 def ask(question):
-    question = question.strip()
+    question = (question or "").strip()
 
     if not question:
-        return "Please enter a question.", ""
+        return "Enter a question first.", ""
 
     if len(question) > MAX_QUESTION_LENGTH:
-        return f"Question too long — please keep it under {MAX_QUESTION_LENGTH} characters.", ""
+        return (
+            f"Question is too long (max {MAX_QUESTION_LENGTH} characters).",
+            "",
+        )
 
-    logger.info(f"Sending query to API: {question}")
+    logger.info("POST /ask via UI")
 
     try:
         response = requests.post(
             f"{API_URL}/ask",
             json={"question": question},
-            timeout=60,
+            timeout=90,
         )
         response.raise_for_status()
     except requests.exceptions.ConnectionError:
-        logger.error("Could not connect to API")
-        return "Could not connect to the API. Make sure api.py is running on port 8000.", ""
+        logger.error("Cannot reach API at %s", API_URL)
+        return (
+            "Cannot reach the API. Start the stack with `python app/run.py` "
+            "and ensure port 8000 is free.",
+            "",
+        )
     except requests.exceptions.Timeout:
-        logger.error("API request timed out")
-        return "The request timed out. Please try again.", ""
-    except requests.exceptions.HTTPError as e:
-        logger.error(f"API returned error: {e}")
-        detail = response.json().get("detail", "Unknown error")
+        logger.error("Request timed out")
+        return "The request timed out. Try a shorter question.", ""
+    except requests.exceptions.HTTPError:
+        logger.error("HTTP error from API: %s", response.status_code)
+        try:
+            detail = response.json().get("detail", response.text)
+        except Exception:
+            detail = response.text
         return f"API error: {detail}", ""
     except Exception as e:
-        logger.error(f"Unexpected error: {e}")
-        return "Something went wrong. Please try again.", ""
+        logger.exception("Unexpected UI error")
+        return f"Something went wrong: {e}", ""
 
     data = response.json()
-
-    citations_text = format_citations(data.get("citations", []))
+    citations_text = _format_citations(data.get("citations", []))
 
     meta = (
-        f"\n\n---\n"
+        "\n\n---\n"
         f"Model: {data.get('model_used', 'unknown')}  |  "
-        f"Chunks used: {data.get('total_chunks_used', '?')}  |  "
-        f"Time: {data.get('generation_time_seconds', 0):.2f}s"
+        f"Chunks: {data.get('total_chunks_used', '?')}  |  "
+        f"Time: {float(data.get('generation_time_seconds', 0)):.2f}s"
     )
 
-    return data.get("answer", "No answer returned.") + meta, citations_text
+    body = data.get("answer", "") or "No answer in response."
+    return body + meta, citations_text
 
 
 EXAMPLES = [
     "How does the attention mechanism work in transformers?",
     "What is the difference between BERT and GPT?",
     "How does dropout help prevent overfitting?",
-    "What are the key ideas behind reinforcement learning from human feedback?",
+    "What are the main ideas behind reinforcement learning from human feedback?",
+    "What is multi-head attention and why is it used?",
 ]
 
 with gr.Blocks(title="Ask My Docs") as demo:
-    gr.Markdown("# Ask My Docs\nAsk questions about AI & ML research papers.")
+    gr.Markdown(
+        "# Ask My Docs\n"
+        "Questions are answered from the ingested PDF corpus via the local API."
+    )
 
     with gr.Row():
         with gr.Column(scale=2):
             question_box = gr.Textbox(
-                label="Your question",
-                placeholder="e.g. How does the attention mechanism work in transformers?",
+                label="Question",
+                placeholder="e.g. How does scaled dot-product attention work?",
                 lines=2,
             )
             with gr.Row():
@@ -100,7 +116,7 @@ with gr.Blocks(title="Ask My Docs") as demo:
         with gr.Column(scale=2):
             citations_box = gr.Textbox(
                 label="Citations",
-                lines=4,
+                lines=5,
                 interactive=False,
             )
 
@@ -110,24 +126,9 @@ with gr.Blocks(title="Ask My Docs") as demo:
         label="Example questions",
     )
 
-    submit_btn.click(
-        fn=ask,
-        inputs=question_box,
-        outputs=[answer_box, citations_box],
-    )
-
-    question_box.submit(
-        fn=ask,
-        inputs=question_box,
-        outputs=[answer_box, citations_box],
-    )
-
+    submit_btn.click(fn=ask, inputs=question_box, outputs=[answer_box, citations_box])
+    question_box.submit(fn=ask, inputs=question_box, outputs=[answer_box, citations_box])
     clear_btn.click(
         fn=lambda: ("", "", ""),
         outputs=[question_box, answer_box, citations_box],
     )
-
-
-if __name__ == "__main__":
-    logger.info("Starting Gradio UI")
-    demo.launch()

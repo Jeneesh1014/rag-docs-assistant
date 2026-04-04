@@ -1,5 +1,3 @@
-# main.py
-
 import os
 import sys
 from dotenv import load_dotenv
@@ -70,12 +68,7 @@ def run_ingestion():
 
 
 def build_retriever():
-    """
-    Creates and loads the retriever once.
-    Call this once at startup and reuse it across multiple queries
-    instead of rebuilding the BM25 index and reloading the embedding
-    model on every single question.
-    """
+    """Load Chroma and BM25 once; reuse for every query."""
     config = RetrievalConfig(
         chroma_db_path=CHROMA_DB_PATH,
         collection_name=COLLECTION_NAME,
@@ -125,13 +118,7 @@ def build_generator():
 
 
 def run_generation(query: str, retriever=None, reranker=None, generator=None):
-    """
-    Full pipeline for one query.
-
-    You can pass in pre-built retriever/reranker/generator so they are
-    not rebuilt on every call. If you do not pass them, it builds fresh
-    ones — useful for single one-off queries.
-    """
+    """Retrieve, rerank, generate. Pass shared components to avoid reloading models."""
     if retriever is None:
         retriever = build_retriever()
     if reranker is None:
@@ -140,10 +127,10 @@ def run_generation(query: str, retriever=None, reranker=None, generator=None):
         generator = build_generator()
 
     logger.info(f"Starting retrieval for: {query}")
-    retrieval_artifact  = retriever.retrieve(query)
+    retrieval_artifact = retriever.retrieve(query)
     retriever.log_results(retrieval_artifact)
 
-    reranking_artifact  = reranker.rerank(retrieval_artifact)
+    reranking_artifact = reranker.rerank(retrieval_artifact)
     reranker.log_results(reranking_artifact)
 
     answer = generator.initiate_generation(reranking_artifact)
@@ -174,12 +161,8 @@ def _print_answer(answer):
 
 
 if __name__ == "__main__":
-    RUN_INGESTION = False
-    RUN_PIPELINE  = True
-
-    if RUN_INGESTION:
+    if "--ingest" in sys.argv:
         run_ingestion()
-
-    if RUN_PIPELINE:
+    else:
         query = "How does the attention mechanism work in transformers?"
         run_generation(query)

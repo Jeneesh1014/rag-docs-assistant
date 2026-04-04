@@ -3,32 +3,11 @@ import time
 import pytest
 from dotenv import load_dotenv
 
-from rag_docs.config.settings import (
-    CHROMA_DB_PATH,
-    COLLECTION_NAME,
-    EMBEDDING_MODEL,
-    EMBEDDING_DEVICE,
-)
-from rag_docs.entity import RetrievalConfig, RerankingConfig
-from rag_docs.core.retrieval import Retriever
+from rag_docs.entity import RerankingConfig
 from rag_docs.core.reranking import Reranker
 
 load_dotenv()
 
-
-#  Shared setup                                                        
-@pytest.fixture(scope="module")
-def retriever():
-    config = RetrievalConfig(
-        chroma_db_path=CHROMA_DB_PATH,
-        collection_name=COLLECTION_NAME,
-        embedding_model=EMBEDDING_MODEL,
-        embedding_device=EMBEDDING_DEVICE,
-    )
-    r = Retriever(config)
-    r.load_vector_store()             # ← load ChromaDB + embeddings
-    r.load_bm25_index()               # ← build BM25 index
-    return r
 
 @pytest.fixture(scope="module")
 def reranker():
