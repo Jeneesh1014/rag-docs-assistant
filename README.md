@@ -2,11 +2,9 @@
 
 End-to-end retrieval stack over a local PDF corpus: hybrid BM25 and vector search, Cohere reranking, Groq generation with Pydantic-grounded citations, Ragas metrics, CI gate, FastAPI, and Gradio.
 
-**Live demo:** add your Hugging Face Space URL here after deploy.
+**Live demo:** https://huggingface.co/spaces/JeneeshSurani/rag-docs-assistant
 
 ## Architecture
-
-Static diagram (optional for slides): `docs/architecture.png` (export from Excalidraw or draw.io).
 
 ```mermaid
 flowchart LR
@@ -59,14 +57,6 @@ Excerpted from the `samples` field in `evaluation_results.json` (wording may dif
 **A:** "According to the Transformer paper [1], the attention mechanism allows modeling dependencies without regard to distance in the input or output sequences [2, 19]…" (answer continues with encoder/decoder self-attention and Figure 3.)
 
 **Sources:** chunk text in the eval trace maps to filenames in `data/documents/` (e.g. _Attention Is All You Need_). **Time:** generation alone is typically sub-second on Groq; end-to-end latency includes retrieval and reranking.
-
-**Q:** "What is multi-head attention and why is it used?"
-
-**A:** Describes attending in multiple representation subspaces, linear projections to dk/dv, and why a single averaged head is weaker.
-
-**Q:** "How does dropout regularization prevent overfitting?"
-
-**A:** Randomly drops units during training so no single unit dominates; ties to cited discussion of regularization in the corpus.
 
 ## Tech stack
 
@@ -154,16 +144,6 @@ Shell helper:
 chmod +x start.sh
 ./start.sh
 ```
-
-## Design notes (interview-style)
-
-**Why hybrid search?** Dense retrieval misses exact keywords and rare entities; BM25 misses paraphrases. Weighted fusion keeps both failure modes in check on a small academic corpus.
-
-**Why rerank after retrieval?** First-stage retrieval favors recall (more chunks). A cross-encoder scores query–passage fit more accurately on a short list, which stabilizes what the LLM sees.
-
-**Why citations from artifacts?** Parsing bracketed references out of model text is brittle. Attaching citation rows from ranked chunks guarantees each label maps to a real source file and chunk index.
-
-**Why singleton retriever/reranker/generator?** Embedding model load, BM25 index build, and API clients are expensive. Building them in the FastAPI lifespan keeps latency predictable for interactive use.
 
 ## Tests and evaluation
 
