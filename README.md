@@ -1,30 +1,58 @@
-# Ask My Docs — production RAG for AI/ML research papers
+# Ask My Docs — Research Assistant for AI/ML Papers (Production RAG System)
 
 End-to-end retrieval stack over a local PDF corpus: hybrid BM25 and vector search, Cohere reranking, Groq generation with Pydantic-grounded citations, Ragas metrics, CI gate, FastAPI, and Gradio.
 
 **Live demo:** https://huggingface.co/spaces/JeneeshSurani/rag-docs-assistant
 
+Try asking:
+
+- "Explain attention mechanism in transformers"
+- "What is contrastive learning?"
+
 ## Architecture
 
-```mermaid
-flowchart LR
-  subgraph ingest [Ingestion]
-    PDF[PDFs] --> Load[Load and chunk]
-    Load --> Emb[Embed]
-    Emb --> Chroma[(ChromaDB)]
-  end
-  subgraph query [Query path]
-    Q[Question] --> H[BM25 plus vector fusion]
-    Chroma --> H
-    H --> R[Reranker]
-    R --> L[LLM]
-    L --> A[Answer plus citations]
-  end
-```
+Pipeline flow:
 
-## What it does
+1. PDF ingestion → chunking → embeddings → stored in ChromaDB
+2. Query → hybrid retrieval (BM25 + vector search)
+3. Top results → Cohere reranker
+4. Final context → Groq LLM (Llama 3.1)
+5. Output → structured answer with citations
 
-The stack ingests PDFs into ChromaDB with local sentence-transformer embeddings. At query time it runs weighted hybrid search (BM25 plus dense vectors), reranks candidates with Cohere, then asks Groq (Llama 3.1) to answer only from the provided context. Citations are built from retrieval metadata, not from free-form model text, so source lines stay tied to real chunks. Ragas scores and a CI gate track regression on a fixed question set.
+The system ensures:
+
+- Retrieval is prioritized over generation
+- Answers are grounded in real document chunks
+- Citations are always traceable to source text
+
+## What It Does
+
+This project is a research assistant for AI/ML papers.
+
+Users can ask questions in natural language, and the system:
+
+- Retrieves relevant sections from research papers
+- Ranks the most useful information
+- Generates a grounded answer with citations
+
+The system is designed to reduce hallucinations by forcing the model
+to answer only from retrieved context.
+
+Example:
+"How does attention work in transformers?"
+→ Returns a structured answer with sources from actual papers.
+
+## Why This Project
+
+Large Language Models often hallucinate and generate incorrect information.
+
+This project focuses on:
+
+- Improving factual accuracy using retrieval (RAG)
+- Measuring answer quality with Ragas
+- Building a reliable, testable AI system
+
+It demonstrates how to move from "demo AI" to "production-ready AI".
 
 ## Technical highlights
 
@@ -34,6 +62,23 @@ The stack ingests PDFs into ChromaDB with local sentence-transformer embeddings.
 - Ragas evaluation and committed `evaluation_results.json`; GitHub Actions runs `check_results.py` as a quality gate
 - FastAPI (`POST /ask`, `GET /health`, OpenAPI at `/docs`) plus Gradio UI that calls the API over HTTP
 - Retriever, reranker, and generator built once at API startup (FastAPI lifespan)
+
+## Key Design Decisions
+
+- Hybrid Search (BM25 + Dense):
+  Improves recall compared to using only vector search
+
+- Reranking before generation:
+  Ensures only the most relevant chunks are passed to the LLM
+
+- Pydantic for structured outputs:
+  Prevents malformed responses and ensures citation integrity
+
+- CI Quality Gate:
+  Prevents performance regression using evaluation metrics
+
+- FastAPI + Gradio separation:
+  Keeps backend and UI loosely coupled for scalability
 
 ## Evaluation results
 
