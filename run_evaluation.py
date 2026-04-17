@@ -7,7 +7,6 @@ from rag_docs.core.evaluation import Evaluator
 
 load_dotenv()
 
-
 def main():
     config = EvaluationConfig(
         groq_api_key=os.getenv("GROQ_API_KEY", ""),
