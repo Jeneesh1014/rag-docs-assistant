@@ -10,6 +10,7 @@ from rag_docs.entity import (
     RAGAnswer,
     Citation,
 )
+from rag_docs.config.settings import GROQ_MODEL
 from rag_docs.core.generation import Generator
 
 load_dotenv()
@@ -184,5 +185,5 @@ def test_real_groq_call(generator, fake_artifact):
     assert isinstance(answer, RAGAnswer)
     assert len(answer.answer) > 0
     assert len(answer.citations) == 3
-    assert answer.model_used == "llama-3.1-8b-instant"
+    assert answer.model_used == GROQ_MODEL
     assert answer.generation_time_seconds > 0

@@ -1,6 +1,7 @@
 # ALL configuration in ONE place
 # Change settings here — everything else updates automatically
 
+import os
 from pathlib import Path
 from dotenv import load_dotenv
 
@@ -39,6 +40,6 @@ COHERE_MODEL = "rerank-english-v3.0"
 RERANK_TOP_N = 3
 
 # ── Generation Settings
-GROQ_MODEL  = "llama-3.1-8b-instant"
+GROQ_MODEL  = os.getenv("GROQ_MODEL", "openai/gpt-oss-120b")
 MAX_TOKENS  = 1024
 TEMPERATURE = 0.1
